@@ -13,7 +13,7 @@
 
 ### Задеплоенное приложение
 
-[Демо на Render](https://java-project-72.onrender.com) — после деплоя замените URL на фактический адрес сервиса, если он отличается.
+[Демо на Render](https://java-project-72.onrender.com)
 
 ### Запуск локально
 

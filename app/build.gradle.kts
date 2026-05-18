@@ -48,7 +48,8 @@ tasks.jar {
 }
 
 tasks.shadowJar {
-    archiveClassifier.set("")
+    archiveBaseName.set("HexletJavalin")
+    archiveClassifier.set("all")
     mergeServiceFiles()
 }
 
