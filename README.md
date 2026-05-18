@@ -13,7 +13,7 @@
 
 ### Задеплоенное приложение
 
-[Демо на Render](https://java-project-72.onrender.com)
+[Демо на Render](https://java-project-72-ijyh.onrender.com)
 
 ### Запуск локально
 
