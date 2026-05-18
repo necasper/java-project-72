@@ -10,3 +10,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=necasper_java-project-72&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=necasper_java-project-72)
 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=necasper_java-project-72&metric=coverage)](https://sonarcloud.io/summary/new_code?id=necasper_java-project-72)
+
+### Задеплоенное приложение
+
+[Демо на Render](https://java-project-72.onrender.com) — после деплоя замените URL на фактический адрес сервиса, если он отличается.

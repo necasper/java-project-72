@@ -1,9 +1,11 @@
 plugins {
     id("com.github.ben-manes.versions") version "0.53.0"
     java
+    application
     checkstyle
     jacoco
     id("org.sonarqube") version "7.3.0.8198"
+    id("com.gradleup.shadow") version "9.3.2"
 }
 
 group = "hexlet.code"
@@ -15,11 +17,18 @@ java {
     }
 }
 
+application {
+    mainClass.set("hexlet.code.App")
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation("io.javalin:javalin:7.2.0")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -27,6 +36,19 @@ dependencies {
 
 dependencyLocking {
     lockAllConfigurations()
+}
+
+tasks.jar {
+    archiveClassifier.set("plain")
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+    mergeServiceFiles()
+}
+
+tasks.assemble {
+    dependsOn(tasks.shadowJar)
 }
 
 tasks.test {
