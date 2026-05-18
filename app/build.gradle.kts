@@ -21,6 +21,11 @@ application {
     mainClass.set("hexlet.code.App")
 }
 
+tasks.named<JavaExec>("run") {
+    val port = System.getenv("PORT") ?: "7070"
+    environment("PORT", port)
+}
+
 repositories {
     mavenCentral()
 }
