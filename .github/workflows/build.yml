@@ -1,0 +1,57 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Секреты/variables из Settings → Environments видны job’у только при совпадении имени.
+    # Создайте окружение с этим именем или замените на своё (как в GitHub → Environments).
+    environment: sonarcloud
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # SONAR_TOKEN — только Secret (Environment или Repository). Не храните токен в Variables.
+      - name: Analyze on SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_ORGANIZATION_SECRET: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_SECRET: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION_VAR: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_VAR: ${{ vars.SONAR_PROJECT_KEY }}
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "::notice::SonarCloud skipped: SONAR_TOKEN is empty. If secrets are under Environments, set job.environment to that name. PRs from forks have no repo secrets."
+            exit 0
+          fi
+          export SONAR_ORGANIZATION="${SONAR_ORGANIZATION_SECRET:-$SONAR_ORGANIZATION_VAR}"
+          export SONAR_PROJECT_KEY="${SONAR_PROJECT_SECRET:-$SONAR_PROJECT_VAR}"
+          ./gradlew sonar
