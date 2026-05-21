@@ -1,10 +1,15 @@
 package hexlet.code;
 
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.database.DataSourceFactory;
 import hexlet.code.database.SchemaInitializer;
 import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 public final class App {
 
@@ -27,8 +32,15 @@ public final class App {
 
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
-            config.routes.get("/", ctx -> ctx.result("Hello World"));
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
+            config.routes.get("/", ctx -> ctx.render("pages/index.jte", Map.of("flash", "")));
         });
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
     /**

@@ -32,6 +32,7 @@ repositories {
 
 dependencies {
     implementation("io.javalin:javalin:7.2.0")
+    implementation("io.javalin:javalin-rendering-jte:7.2.2")
     implementation("org.slf4j:slf4j-simple:2.0.17")
     implementation("com.zaxxer:HikariCP:6.2.1")
     implementation("com.h2database:h2:2.3.232")
