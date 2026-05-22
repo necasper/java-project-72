@@ -1,6 +1,6 @@
 @param String flash = ""
 
-@layout(
+@template.layout(
     title = "Анализатор страниц",
     flash = flash,
     pageContent = @`

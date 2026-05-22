@@ -17,6 +17,18 @@ java {
     }
 }
 
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Javadoc> {
+    options.encoding = "UTF-8"
+}
+
+tasks.processResources {
+    filteringCharset = "UTF-8"
+}
+
 application {
     mainClass.set("hexlet.code.App")
 }
@@ -24,6 +36,7 @@ application {
 tasks.named<JavaExec>("run") {
     val port = System.getenv("PORT") ?: "7070"
     environment("PORT", port)
+    systemProperty("file.encoding", "UTF-8")
 }
 
 repositories {

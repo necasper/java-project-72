@@ -1,5 +1,7 @@
+@import gg.jte.Content
+
 @param String title
-@param gg.jte.Content pageContent
+@param Content pageContent
 @param String flash = ""
 
 <!DOCTYPE html>
