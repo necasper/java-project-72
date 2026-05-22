@@ -3,8 +3,8 @@ package hexlet.code;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import hexlet.code.database.DataSourceFactory;
-import hexlet.code.template.Utf8ResourceCodeResolver;
 import hexlet.code.database.SchemaInitializer;
+import hexlet.code.template.Utf8ResourceCodeResolver;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 

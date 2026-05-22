@@ -21,8 +21,6 @@ public final class DataSourceFactory {
 
     private static final String DRIVER_H2 = "org.h2.Driver";
 
-    private static volatile HikariDataSource dataSource;
-
     private DataSourceFactory() {
     }
 
@@ -32,14 +30,12 @@ public final class DataSourceFactory {
      * @return shared pool
      */
     public static DataSource getDataSource() {
-        if (dataSource == null) {
-            synchronized (DataSourceFactory.class) {
-                if (dataSource == null) {
-                    dataSource = createPool();
-                }
-            }
-        }
-        return dataSource;
+        return Holder.INSTANCE;
+    }
+
+    private static final class Holder {
+
+        private static final HikariDataSource INSTANCE = createPool();
     }
 
     private static HikariDataSource createPool() {

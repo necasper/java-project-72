@@ -31,9 +31,7 @@ public final class UrlRepository extends BaseRepository {
                 ? "INSERT INTO urls (name) VALUES (?)"
                 : "INSERT INTO urls (name, created_at) VALUES (?, ?)";
         try (var conn = dataSource.getConnection();
-             var ps = url.getCreatedAt() == null
-                     ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
-                     : conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             var ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, url.getName());
             if (url.getCreatedAt() != null) {
                 ps.setTimestamp(2, Timestamp.valueOf(url.getCreatedAt()));
