@@ -2,10 +2,16 @@ package hexlet.code.template;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.URL;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -61,5 +67,46 @@ class Utf8ResourceCodeResolverTest {
     void getLastModifiedReturnsValueForExistingTemplate() {
         var resolver = new Utf8ResourceCodeResolver("templates", getClass().getClassLoader());
         assertTrue(resolver.getLastModified(TEMPLATE) >= 0);
+    }
+
+    @Test
+    void resolveWrapsIOExceptionWhenStreamFails() {
+        var classLoader = new ClassLoader(getClass().getClassLoader()) {
+            @Override
+            public InputStream getResourceAsStream(String name) {
+                if ("templates/broken.jte".equals(name)) {
+                    return new InputStream() {
+                        @Override
+                        public int read() throws IOException {
+                            throw new IOException("read failed");
+                        }
+                    };
+                }
+                return super.getResourceAsStream(name);
+            }
+        };
+        var resolver = new Utf8ResourceCodeResolver("templates", classLoader);
+
+        assertThrows(UncheckedIOException.class, () -> resolver.resolve("broken.jte"));
+    }
+
+    @Test
+    void getLastModifiedReturnsZeroWhenResourceUriIsInvalid() throws Exception {
+        var classLoader = new ClassLoader(getClass().getClassLoader()) {
+            @Override
+            public URL getResource(String name) {
+                if ("templates/invalid-uri.jte".equals(name)) {
+                    try {
+                        return new URL("http://example.com/template.jte");
+                    } catch (java.net.MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                return super.getResource(name);
+            }
+        };
+        var resolver = new Utf8ResourceCodeResolver("templates", classLoader);
+
+        assertEquals(0, resolver.getLastModified("invalid-uri.jte"));
     }
 }

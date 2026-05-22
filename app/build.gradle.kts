@@ -76,10 +76,65 @@ tasks.assemble {
 
 tasks.test {
     useJUnitPlatform()
+    environment("PORT", "0")
+    exclude(
+        "**/AppDatabaseFailureTest.class",
+        "**/DataSourceFactoryPostgresEnvTest.class",
+        "**/DataSourceFactoryCustomUrlEnvTest.class"
+    )
     finalizedBy(tasks.jacocoTestReport)
 }
 
+tasks.register<Test>("appDatabaseFailureTest") {
+    description = "Runs database failure tests in an isolated JVM"
+    group = "verification"
+    useJUnitPlatform()
+    include("**/AppDatabaseFailureTest.class")
+    environment("PORT", "0")
+    mustRunAfter(tasks.test)
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.register<Test>("dataSourcePostgresEnvTest") {
+    description = "Runs DataSourceFactory tests with PostgreSQL JDBC URL"
+    group = "verification"
+    useJUnitPlatform()
+    include("**/DataSourceFactoryPostgresEnvTest.class")
+    environment("JDBC_DATABASE_URL", "jdbc:postgresql://localhost:5432/test")
+    environment("PORT", "0")
+    mustRunAfter(tasks.test)
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.register<Test>("dataSourceCustomUrlEnvTest") {
+    description = "Runs DataSourceFactory tests with custom JDBC URL from environment"
+    group = "verification"
+    useJUnitPlatform()
+    include("**/DataSourceFactoryCustomUrlEnvTest.class")
+    environment("JDBC_DATABASE_URL", "jdbc:h2:mem:fromEnv;DB_CLOSE_DELAY=-1")
+    environment("PORT", "0")
+    mustRunAfter(tasks.test)
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.check {
+    dependsOn(
+        tasks.named("appDatabaseFailureTest"),
+        tasks.named("dataSourcePostgresEnvTest"),
+        tasks.named("dataSourceCustomUrlEnvTest")
+    )
+}
+
 tasks.jacocoTestReport {
+    dependsOn(
+        tasks.test,
+        tasks.named("appDatabaseFailureTest"),
+        tasks.named("dataSourcePostgresEnvTest"),
+        tasks.named("dataSourceCustomUrlEnvTest")
+    )
+    executionData.setFrom(
+        fileTree(layout.buildDirectory.dir("jacoco")).include("**/*.exec")
+    )
     reports {
         xml.required.set(true)
     }
