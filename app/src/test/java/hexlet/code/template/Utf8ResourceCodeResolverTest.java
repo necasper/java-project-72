@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -41,5 +42,24 @@ class Utf8ResourceCodeResolverTest {
     void resolveReturnsNullForMissingTemplate() {
         var resolver = new Utf8ResourceCodeResolver("templates", getClass().getClassLoader());
         assertFalse(resolver.exists("missing.jte"));
+        assertNull(resolver.resolve("missing.jte"));
+    }
+
+    @Test
+    void emptyRootResolvesTemplatesFromClasspathRoot() {
+        var resolver = new Utf8ResourceCodeResolver("", getClass().getClassLoader());
+        assertTrue(resolver.exists("schema.sql"));
+    }
+
+    @Test
+    void nullClassLoaderUsesContextClassLoader() {
+        var resolver = new Utf8ResourceCodeResolver("templates", null);
+        assertTrue(resolver.exists(TEMPLATE));
+    }
+
+    @Test
+    void getLastModifiedReturnsValueForExistingTemplate() {
+        var resolver = new Utf8ResourceCodeResolver("templates", getClass().getClassLoader());
+        assertTrue(resolver.getLastModified(TEMPLATE) >= 0);
     }
 }
