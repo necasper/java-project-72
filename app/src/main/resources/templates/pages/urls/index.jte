@@ -1,4 +1,4 @@
-@param java.util.List<hexlet.code.model.Url> urls
+@param java.util.List<hexlet.code.dto.UrlView> urls
 @param String flash = ""
 @param String flashType = "info"
 
@@ -13,17 +13,25 @@
         <tr>
             <th>ID</th>
             <th>Имя</th>
-            <th>Дата создания</th>
+            <th>Последняя проверка</th>
             <th>Код ответа</th>
         </tr>
     </thead>
     <tbody>
-        @for(var url : urls)
+        @for(var view : urls)
             <tr>
-                <td>${url.getId()}</td>
-                <td><a href="/urls/${url.getId()}">${url.getName()}</a></td>
-                <td>${url.getCreatedAt().toLocalDate().toString()}</td>
-                <td></td>
+                <td>${view.getUrl().getId()}</td>
+                <td><a href="/urls/${view.getUrl().getId()}">${view.getUrl().getName()}</a></td>
+                <td>
+                    @if(view.getLastCheck() != null)
+                        ${view.getLastCheck().getCreatedAt().toLocalDate().toString()}
+                    @endif
+                </td>
+                <td>
+                    @if(view.getLastCheck() != null)
+                        ${view.getLastCheck().getStatusCode()}
+                    @endif
+                </td>
             </tr>
         @endfor
     </tbody>

@@ -50,9 +50,11 @@ dependencies {
     implementation("com.zaxxer:HikariCP:6.2.1")
     implementation("com.h2database:h2:2.3.232")
     implementation("org.postgresql:postgresql:42.7.5")
+    implementation("com.konghq:unirest-java:3.14.5")
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

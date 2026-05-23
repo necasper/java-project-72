@@ -4,7 +4,9 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import hexlet.code.database.SchemaInitializer;
 import hexlet.code.handler.UrlHandler;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
+import hexlet.code.service.PageChecker;
 import hexlet.code.template.Utf8ResourceCodeResolver;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -18,23 +20,24 @@ public final class App {
 
     private static final String DEFAULT_PORT = "7070";
 
-    /**
-     * Builds a Javalin application with routes and database schema applied.
-     *
-     * @return configured app instance
-     */
     public static Javalin getApp() {
         return buildApp(hexlet.code.database.DataSourceFactory.getDataSource());
     }
 
     public static Javalin buildApp(DataSource dataSource) {
+        return buildApp(dataSource, new PageChecker());
+    }
+
+    public static Javalin buildApp(DataSource dataSource, PageChecker pageChecker) {
         try {
             SchemaInitializer.apply(dataSource);
         } catch (SQLException e) {
             throw new RuntimeException("Database initialization failed", e);
         }
 
-        var urlHandler = new UrlHandler(new UrlRepository(dataSource));
+        var urlRepository = new UrlRepository(dataSource);
+        var urlCheckRepository = new UrlCheckRepository(dataSource);
+        var urlHandler = new UrlHandler(urlRepository, urlCheckRepository, pageChecker);
 
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
@@ -43,6 +46,7 @@ public final class App {
             config.routes.get("/urls", urlHandler::showAll);
             config.routes.get("/urls/{id}", urlHandler::showOne);
             config.routes.post("/urls", urlHandler::create);
+            config.routes.post("/urls/{id}/checks", urlHandler::createCheck);
         });
     }
 
@@ -52,11 +56,6 @@ public final class App {
         return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
-    /**
-     * Starts the HTTP server on {@code PORT} or {@link #DEFAULT_PORT}.
-     *
-     * @param args unused
-     */
     public static void main(String[] args) {
         Javalin app = getApp();
         int port = Integer.parseInt(System.getenv().getOrDefault(PORT_ENV, DEFAULT_PORT));

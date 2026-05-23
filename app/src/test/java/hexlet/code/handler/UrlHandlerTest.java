@@ -78,7 +78,7 @@ class UrlHandlerTest {
 
         assertEquals(200, response.statusCode());
         assertTrue(response.body().contains("data-test=\"urls\""));
-        assertTrue(response.body().contains("Дата создания"));
+        assertTrue(response.body().contains("Последняя проверка"));
     }
 
     @Test

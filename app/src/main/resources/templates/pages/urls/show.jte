@@ -1,4 +1,7 @@
+@import hexlet.code.util.TextUtils
+
 @param hexlet.code.model.Url url
+@param java.util.List<hexlet.code.model.UrlCheck> checks
 @param String flash = ""
 @param String flashType = "info"
 
@@ -40,6 +43,16 @@
         </tr>
     </thead>
     <tbody>
+        @for(var check : checks)
+            <tr>
+                <td>${check.getId()}</td>
+                <td>${check.getStatusCode()}</td>
+                <td>${TextUtils.truncate(check.getH1(), TextUtils.MAX_PREVIEW_LENGTH)}</td>
+                <td>${TextUtils.truncate(check.getTitle(), TextUtils.MAX_PREVIEW_LENGTH)}</td>
+                <td>${TextUtils.truncate(check.getDescription(), TextUtils.MAX_PREVIEW_LENGTH)}</td>
+                <td>${check.getCreatedAt().toLocalDate().toString()}</td>
+            </tr>
+        @endfor
     </tbody>
 </table>
 `
