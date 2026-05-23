@@ -11,23 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Persistence layer for {@link Url} entities (table {@code urls}).
- */
 public final class UrlRepository extends BaseRepository {
 
     private static final String SELECT_COLUMNS = "SELECT id, name, created_at FROM urls";
 
-    /**
-     * @param dataSource Hikari (or other) {@link DataSource}
-     */
     public UrlRepository(DataSource dataSource) {
         super(dataSource);
     }
 
-    /**
-     * @return all URLs ordered by {@code created_at} descending (newest first)
-     */
     public List<Url> findAll() throws SQLException {
         var sql = SELECT_COLUMNS + " ORDER BY created_at DESC";
         var urls = new ArrayList<Url>();
@@ -41,10 +32,6 @@ public final class UrlRepository extends BaseRepository {
         return urls;
     }
 
-    /**
-     * @param id primary key
-     * @return URL if found
-     */
     public Optional<Url> findById(long id) throws SQLException {
         var sql = SELECT_COLUMNS + " WHERE id = ?";
         try (var conn = dataSource.getConnection();
@@ -59,10 +46,6 @@ public final class UrlRepository extends BaseRepository {
         return Optional.empty();
     }
 
-    /**
-     * @param name normalized site address
-     * @return URL if found
-     */
     public Optional<Url> findByName(String name) throws SQLException {
         var sql = SELECT_COLUMNS + " WHERE name = ?";
         try (var conn = dataSource.getConnection();
@@ -77,13 +60,6 @@ public final class UrlRepository extends BaseRepository {
         return Optional.empty();
     }
 
-    /**
-     * Inserts a new URL; {@code created_at} defaults to DB {@code CURRENT_TIMESTAMP} when {@code null}.
-     *
-     * @param url model with {@code name} set; {@code id} is ignored
-     * @return the same instance with {@code id} and {@code createdAt} populated from the database
-     * @throws SQLException on JDBC errors
-     */
     public Url save(Url url) throws SQLException {
         var sql = url.getCreatedAt() == null
                 ? "INSERT INTO urls (name) VALUES (?)"

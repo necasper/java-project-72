@@ -11,9 +11,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * HTTP handlers for URL pages and form submission.
- */
 public final class UrlHandler {
 
     private static final String MSG_INVALID_URL = "Некорректный URL";
@@ -24,23 +21,14 @@ public final class UrlHandler {
 
     private final UrlRepository urlRepository;
 
-    /**
-     * @param urlRepository persistence for {@link Url}
-     */
     public UrlHandler(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
     }
 
-    /**
-     * @param ctx Javalin context
-     */
     public void showIndex(Context ctx) {
         ctx.render("pages/index.jte", viewModel(ctx));
     }
 
-    /**
-     * @param ctx Javalin context
-     */
     public void showAll(Context ctx) {
         try {
             var model = viewModel(ctx);
@@ -51,9 +39,6 @@ public final class UrlHandler {
         }
     }
 
-    /**
-     * @param ctx Javalin context
-     */
     public void showOne(Context ctx) {
         try {
             long id = parseId(ctx.pathParam("id"));
@@ -66,9 +51,6 @@ public final class UrlHandler {
         }
     }
 
-    /**
-     * @param ctx Javalin context
-     */
     public void create(Context ctx) {
         String normalized = UrlNormalizer.normalize(ctx.formParam("url"));
         if (normalized == null) {

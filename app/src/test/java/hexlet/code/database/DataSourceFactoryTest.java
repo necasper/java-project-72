@@ -7,9 +7,6 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Verifies {@link DataSourceFactory} builds a usable JDBC pool.
- */
 class DataSourceFactoryTest {
 
     @Test

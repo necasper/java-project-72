@@ -2,7 +2,6 @@ package hexlet.code;
 
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
-import hexlet.code.database.DataSourceFactory;
 import hexlet.code.database.SchemaInitializer;
 import hexlet.code.handler.UrlHandler;
 import hexlet.code.repository.UrlRepository;
@@ -10,6 +9,7 @@ import hexlet.code.template.Utf8ResourceCodeResolver;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 public final class App {
@@ -24,14 +24,17 @@ public final class App {
      * @return configured app instance
      */
     public static Javalin getApp() {
+        return buildApp(hexlet.code.database.DataSourceFactory.getDataSource());
+    }
+
+    public static Javalin buildApp(DataSource dataSource) {
         try {
-            var dataSource = DataSourceFactory.getDataSource();
             SchemaInitializer.apply(dataSource);
         } catch (SQLException e) {
             throw new RuntimeException("Database initialization failed", e);
         }
 
-        var urlHandler = new UrlHandler(new UrlRepository(DataSourceFactory.getDataSource()));
+        var urlHandler = new UrlHandler(new UrlRepository(dataSource));
 
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();

@@ -10,9 +10,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Renders the main page template and checks layout, Bootstrap, and form markup.
- */
 class IndexTemplateTest {
 
     @Test

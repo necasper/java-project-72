@@ -14,9 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Verifies classpath templates are read as UTF-8 (Cyrillic must not be corrupted).
- */
 class Utf8ResourceCodeResolverTest {
 
     private static final String TEMPLATE = "pages/index.jte";

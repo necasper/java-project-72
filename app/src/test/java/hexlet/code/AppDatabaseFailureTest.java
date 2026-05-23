@@ -10,9 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * Verifies {@link App#getApp()} wraps database errors; runs in an isolated JVM (see Gradle).
- */
 class AppDatabaseFailureTest {
 
     @Test

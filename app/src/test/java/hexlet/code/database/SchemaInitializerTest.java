@@ -10,9 +10,6 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Ensures {@code schema.sql} can be applied repeatedly (tests reset DB state from the same script).
- */
 class SchemaInitializerTest {
 
     @Test

@@ -8,9 +8,6 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-/**
- * Covers PostgreSQL branch in {@link DataSourceFactory}; runs in an isolated JVM with env set in Gradle.
- */
 class DataSourceFactoryPostgresEnvTest {
 
     @Test

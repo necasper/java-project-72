@@ -10,19 +10,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Loads JTE templates from the classpath as UTF-8 (platform default charset breaks Cyrillic on Windows).
- */
 public final class Utf8ResourceCodeResolver implements CodeResolver {
 
     private final String root;
 
     private final ClassLoader classLoader;
 
-    /**
-     * @param root         resources root, e.g. {@code templates}
-     * @param classLoader  class loader for resources (may be {@code null} for context loader)
-     */
     public Utf8ResourceCodeResolver(String root, ClassLoader classLoader) {
         if (root.isEmpty()) {
             this.root = "";

@@ -7,9 +7,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * Unit tests for {@link Url} model accessors.
- */
 class UrlTest {
 
     @Test

@@ -8,9 +8,6 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Covers custom {@code JDBC_DATABASE_URL} branch in {@link DataSourceFactory}; runs in an isolated JVM.
- */
 class DataSourceFactoryCustomUrlEnvTest {
 
     @Test

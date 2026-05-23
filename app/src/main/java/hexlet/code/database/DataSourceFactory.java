@@ -5,10 +5,6 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
 
-/**
- * Builds a shared {@link HikariDataSource}: PostgreSQL URL from {@code JDBC_DATABASE_URL}
- * or in-memory H2 database named {@code project} for local development.
- */
 public final class DataSourceFactory {
 
     private static final String JDBC_DATABASE_URL = "JDBC_DATABASE_URL";
@@ -24,11 +20,6 @@ public final class DataSourceFactory {
     private DataSourceFactory() {
     }
 
-    /**
-     * Returns the singleton {@link DataSource} (Hikari pool).
-     *
-     * @return shared pool
-     */
     public static DataSource getDataSource() {
         return Holder.INSTANCE;
     }

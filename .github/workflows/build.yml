@@ -36,8 +36,8 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Build and test with coverage
+        run: ./gradlew check jacocoTestReport
 
       # SONAR_TOKEN — только Secret (Environment или Repository). Не храните токен в Variables.
       - name: Analyze on SonarCloud

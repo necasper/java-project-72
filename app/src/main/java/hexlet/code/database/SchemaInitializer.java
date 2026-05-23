@@ -7,9 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Applies DDL from {@code schema.sql} on the classpath (for app startup and tests).
- */
 public final class SchemaInitializer {
 
     private static final String SCHEMA_RESOURCE = "/schema.sql";
@@ -17,12 +14,6 @@ public final class SchemaInitializer {
     private SchemaInitializer() {
     }
 
-    /**
-     * Executes {@link #SCHEMA_RESOURCE} against the given {@link DataSource}.
-     *
-     * @param dataSource JDBC source
-     * @throws SQLException if DDL fails
-     */
     public static void apply(DataSource dataSource) throws SQLException {
         String ddl = readSchemaResource();
         try (var conn = dataSource.getConnection();

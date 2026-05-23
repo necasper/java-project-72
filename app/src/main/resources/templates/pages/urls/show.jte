@@ -25,10 +25,10 @@
     </tbody>
 </table>
 <h2 class="mt-5 mb-3">Проверки</h2>
-<form action="/urls/${url.getId()}/checks" method="post" class="mb-4">
-    <button type="submit" class="btn btn-primary">Запустить проверку</button>
+<form method="post" action="/urls/${url.getId()}/checks" class="mb-4">
+    <input type="submit" value="Запустить проверку">
 </form>
-<table class="table table-bordered">
+<table class="table table-bordered" data-test="checks">
     <thead>
         <tr>
             <th>ID</th>
