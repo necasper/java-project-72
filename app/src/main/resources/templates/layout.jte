@@ -3,6 +3,7 @@
 @param String title
 @param Content pageContent
 @param String flash = ""
+@param String flashType = "info"
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -23,7 +24,7 @@
 </nav>
 <main class="container my-4">
     @if(flash != null && !flash.isBlank())
-        <div class="alert alert-info mb-3" role="alert">${flash}</div>
+        <div class="alert alert-${flashType} mb-3" role="alert">${flash}</div>
     @endif
     ${pageContent}
 </main>

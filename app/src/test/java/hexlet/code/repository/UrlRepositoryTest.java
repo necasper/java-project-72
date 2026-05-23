@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration tests for {@link UrlRepository#save(Url)}.
@@ -63,5 +64,35 @@ class UrlRepositoryTest {
         assertNotNull(saved.getId());
         assertEquals("https://hexlet.io", saved.getName());
         assertEquals(createdAt, saved.getCreatedAt());
+    }
+
+    @Test
+    void findByNameReturnsSavedUrl() throws Exception {
+        var url = new Url();
+        url.setName("https://example.org");
+        repository.save(url);
+
+        var found = repository.findByName("https://example.org");
+
+        assertTrue(found.isPresent());
+        assertEquals(url.getId(), found.get().getId());
+    }
+
+    @Test
+    void findAllReturnsUrlsOrderedByCreatedAtDesc() throws Exception {
+        var older = new Url();
+        older.setName("https://older.com");
+        older.setCreatedAt(LocalDateTime.of(2020, 1, 1, 0, 0));
+        repository.save(older);
+
+        var newer = new Url();
+        newer.setName("https://newer.com");
+        newer.setCreatedAt(LocalDateTime.of(2024, 1, 1, 0, 0));
+        repository.save(newer);
+
+        var urls = repository.findAll();
+        var ids = urls.stream().map(Url::getId).toList();
+
+        assertTrue(ids.indexOf(newer.getId()) < ids.indexOf(older.getId()));
     }
 }

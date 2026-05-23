@@ -4,12 +4,13 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import hexlet.code.database.DataSourceFactory;
 import hexlet.code.database.SchemaInitializer;
+import hexlet.code.handler.UrlHandler;
+import hexlet.code.repository.UrlRepository;
 import hexlet.code.template.Utf8ResourceCodeResolver;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 
 import java.sql.SQLException;
-import java.util.Map;
 
 public final class App {
 
@@ -30,10 +31,15 @@ public final class App {
             throw new RuntimeException("Database initialization failed", e);
         }
 
+        var urlHandler = new UrlHandler(new UrlRepository(DataSourceFactory.getDataSource()));
+
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
-            config.routes.get("/", ctx -> ctx.render("pages/index.jte", Map.of("flash", "")));
+            config.routes.get("/", urlHandler::showIndex);
+            config.routes.get("/urls", urlHandler::showAll);
+            config.routes.get("/urls/{id}", urlHandler::showOne);
+            config.routes.post("/urls", urlHandler::create);
         });
     }
 
