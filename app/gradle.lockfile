@@ -92,6 +92,7 @@ org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10=testCompileClasspath,testRuntimeC
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10=testCompileClasspath,testRuntimeClasspath
 org.jetbrains.kotlin:kotlin-stdlib:2.2.20=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.jetbrains:annotations:13.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.jsoup:jsoup:1.18.3=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.jspecify:jspecify:1.0.0=checkstyle
 org.junit.jupiter:junit-jupiter-api:5.11.4=testCompileClasspath,testRuntimeClasspath
 org.junit.jupiter:junit-jupiter-engine:5.11.4=testRuntimeClasspath

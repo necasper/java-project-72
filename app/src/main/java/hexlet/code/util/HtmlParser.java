@@ -1,50 +1,36 @@
 package hexlet.code.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public final class HtmlParser {
-
-    private static final Pattern TITLE = Pattern.compile("<title[^>]*>(.*?)</title>",
-            Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-
-    private static final Pattern H1 = Pattern.compile("<h1[^>]*>(.*?)</h1>",
-            Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-
-    private static final Pattern DESCRIPTION = Pattern.compile(
-            "<meta\\s+name=\"description\"\\s+content=\"([^\"]*)\"",
-            Pattern.CASE_INSENSITIVE);
 
     private HtmlParser() {
     }
 
     public static String extractTitle(String html) {
-        return extractFirstGroup(html, TITLE);
+        return textOrEmpty(parse(html).title());
     }
 
     public static String extractH1(String html) {
-        return stripTags(extractFirstGroup(html, H1));
+        Element h1 = parse(html).selectFirst("h1");
+        return h1 == null ? "" : textOrEmpty(h1.text());
     }
 
     public static String extractDescription(String html) {
-        return extractFirstGroup(html, DESCRIPTION);
+        Element meta = parse(html).selectFirst("meta[name=description]");
+        return meta == null ? "" : textOrEmpty(meta.attr("content"));
     }
 
-    private static String extractFirstGroup(String html, Pattern pattern) {
+    private static Document parse(String html) {
         if (html == null || html.isBlank()) {
-            return "";
+            return Jsoup.parse("");
         }
-        Matcher matcher = pattern.matcher(html);
-        if (matcher.find()) {
-            return stripTags(matcher.group(1)).trim();
-        }
-        return "";
+        return Jsoup.parse(html);
     }
 
-    private static String stripTags(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.replaceAll("<[^>]+>", "").trim();
+    private static String textOrEmpty(String value) {
+        return value == null ? "" : value.trim();
     }
 }

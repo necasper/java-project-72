@@ -24,4 +24,13 @@ class HtmlParserTest {
         assertEquals("Do not expect a miracle, miracles yourself!", HtmlParser.extractH1(html));
         assertEquals("Statements of great people", HtmlParser.extractDescription(html));
     }
+
+    @Test
+    void returnsEmptyStringsWhenTagsAreMissing() {
+        String html = "<html><body></body></html>";
+
+        assertEquals("", HtmlParser.extractTitle(html));
+        assertEquals("", HtmlParser.extractH1(html));
+        assertEquals("", HtmlParser.extractDescription(html));
+    }
 }
