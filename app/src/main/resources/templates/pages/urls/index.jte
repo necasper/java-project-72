@@ -24,7 +24,7 @@
                 <td><a href="/urls/${view.getUrl().getId()}">${view.getUrl().getName()}</a></td>
                 <td>
                     @if(view.getLastCheck() != null)
-                        ${view.getLastCheck().getCreatedAt().toLocalDate().toString()}
+                        ${view.getLastCheck().getCreatedAt().toString()}
                     @endif
                 </td>
                 <td>

@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public final class UrlCheckRepository extends BaseRepository {
@@ -33,6 +35,28 @@ public final class UrlCheckRepository extends BaseRepository {
             }
         }
         return checks;
+    }
+
+    public Map<Long, UrlCheck> findLatestChecks() throws SQLException {
+        var sql = """
+                SELECT c.id, c.url_id, c.status_code, c.h1, c.title, c.description, c.created_at
+                FROM url_checks c
+                INNER JOIN (
+                    SELECT url_id, MAX(id) AS max_id
+                    FROM url_checks
+                    GROUP BY url_id
+                ) latest ON c.url_id = latest.url_id AND c.id = latest.max_id
+                """;
+        var result = new HashMap<Long, UrlCheck>();
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql);
+             var rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                var check = mapRow(rs);
+                result.put(check.getUrlId(), check);
+            }
+        }
+        return result;
     }
 
     public Optional<UrlCheck> findLatestByUrlId(long urlId) throws SQLException {

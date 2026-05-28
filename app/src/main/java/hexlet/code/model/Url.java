@@ -13,10 +13,8 @@ public final class Url {
     public Url() {
     }
 
-    public Url(Long id, String name, LocalDateTime createdAt) {
-        this.id = id;
+    public Url(String name) {
         this.name = name;
-        this.createdAt = createdAt;
     }
 
     public Long getId() {

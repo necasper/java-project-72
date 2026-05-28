@@ -12,6 +12,8 @@ import hexlet.code.web.Flash;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,10 +50,10 @@ public final class UrlHandler {
     public void showAll(Context ctx) {
         try {
             var model = viewModel(ctx);
+            var latestChecks = urlCheckRepository.findLatestChecks();
             var views = new ArrayList<UrlView>();
             for (Url url : urlRepository.findAll()) {
-                var lastCheck = urlCheckRepository.findLatestByUrlId(url.getId()).orElse(null);
-                views.add(new UrlView(url, lastCheck));
+                views.add(new UrlView(url, latestChecks.get(url.getId())));
             }
             model.put("urls", views);
             ctx.render("pages/urls/index.jte", model);
@@ -74,25 +76,28 @@ public final class UrlHandler {
     }
 
     public void create(Context ctx) {
-        String normalized = UrlNormalizer.normalize(ctx.formParam("url"));
-        if (normalized == null) {
-            var model = viewModel(ctx);
-            model.put("flash", MSG_INVALID_URL);
-            model.put("flashType", "danger");
-            ctx.status(422);
-            ctx.render("pages/index.jte", model);
+        var inputUrl = ctx.formParam("url");
+        try {
+            new URI(inputUrl != null ? inputUrl.trim() : "");
+        } catch (URISyntaxException | IllegalArgumentException e) {
+            renderInvalidUrl(ctx);
+            return;
+        }
+
+        var normalized = UrlNormalizer.normalize(inputUrl);
+        if (normalized.isEmpty()) {
+            renderInvalidUrl(ctx);
             return;
         }
 
         try {
-            var existing = urlRepository.findByName(normalized);
+            var existing = urlRepository.findByName(normalized.get());
             if (existing.isPresent()) {
                 redirectToUrl(ctx, existing.get().getId(), MSG_ALREADY_EXISTS, "info");
                 return;
             }
 
-            var url = new Url();
-            url.setName(normalized);
+            var url = new Url(normalized.get());
             urlRepository.save(url);
             redirectToUrl(ctx, url.getId(), MSG_CREATED, "success");
         } catch (SQLException e) {
@@ -124,6 +129,14 @@ public final class UrlHandler {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void renderInvalidUrl(Context ctx) {
+        var model = viewModel(ctx);
+        model.put("flash", MSG_INVALID_URL);
+        model.put("flashType", "danger");
+        ctx.status(422);
+        ctx.render("pages/index.jte", model);
     }
 
     private static void redirectToUrl(Context ctx, long id, String message, String type) {

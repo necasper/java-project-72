@@ -1,6 +1,7 @@
 package hexlet.code.service;
 
 import hexlet.code.util.HtmlParser;
+import io.javalin.http.HttpStatus;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
@@ -11,7 +12,7 @@ public final class PageChecker {
         try {
             HttpResponse<String> response = Unirest.get(url).asString();
             int statusCode = response.getStatus();
-            if (statusCode >= 400) {
+            if (statusCode >= HttpStatus.BAD_REQUEST.getCode()) {
                 return PageCheckResult.failure();
             }
             String body = response.getBody() != null ? response.getBody() : "";

@@ -61,15 +61,10 @@ public final class UrlRepository extends BaseRepository {
     }
 
     public Url save(Url url) throws SQLException {
-        var sql = url.getCreatedAt() == null
-                ? "INSERT INTO urls (name) VALUES (?)"
-                : "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+        var sql = "INSERT INTO urls (name) VALUES (?)";
         try (var conn = dataSource.getConnection();
              var ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, url.getName());
-            if (url.getCreatedAt() != null) {
-                ps.setTimestamp(2, Timestamp.valueOf(url.getCreatedAt()));
-            }
             ps.executeUpdate();
             try (var keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {

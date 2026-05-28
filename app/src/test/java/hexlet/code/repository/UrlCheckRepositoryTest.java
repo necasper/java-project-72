@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +26,7 @@ class UrlCheckRepositoryTest {
     @BeforeEach
     void setUp() throws Exception {
         var config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:mem:urlCheckRepositoryTest;DB_CLOSE_DELAY=-1");
+        config.setJdbcUrl("jdbc:h2:mem:urlCheckRepositoryTest_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
         config.setDriverClassName("org.h2.Driver");
         config.setMaximumPoolSize(1);
         dataSource = new HikariDataSource(config);
@@ -42,8 +44,7 @@ class UrlCheckRepositoryTest {
 
     @Test
     void saveAndFindByUrlId() throws Exception {
-        var url = new Url();
-        url.setName("https://example.com");
+        var url = new Url("https://example.com");
         urlRepository.save(url);
 
         var check = new UrlCheck();
@@ -63,9 +64,38 @@ class UrlCheckRepositoryTest {
     }
 
     @Test
+    void findLatestChecksReturnsLatestCheckPerUrl() throws Exception {
+        var firstUrl = new Url("https://first.example.com");
+        urlRepository.save(firstUrl);
+        var secondUrl = new Url("https://second.example.com");
+        urlRepository.save(secondUrl);
+
+        var firstCheck = new UrlCheck();
+        firstCheck.setUrlId(firstUrl.getId());
+        firstCheck.setStatusCode(200);
+        firstCheck.setH1("First");
+        firstCheck.setTitle("First");
+        firstCheck.setDescription("First");
+        urlCheckRepository.save(firstCheck);
+
+        var secondCheck = new UrlCheck();
+        secondCheck.setUrlId(secondUrl.getId());
+        secondCheck.setStatusCode(404);
+        secondCheck.setH1("Second");
+        secondCheck.setTitle("Second");
+        secondCheck.setDescription("Second");
+        urlCheckRepository.save(secondCheck);
+
+        var latest = urlCheckRepository.findLatestChecks();
+
+        assertEquals(2, latest.size());
+        assertEquals(firstCheck.getId(), latest.get(firstUrl.getId()).getId());
+        assertEquals(secondCheck.getId(), latest.get(secondUrl.getId()).getId());
+    }
+
+    @Test
     void findLatestByUrlIdReturnsMostRecentCheck() throws Exception {
-        var url = new Url();
-        url.setName("https://hexlet.io");
+        var url = new Url("https://hexlet.io");
         urlRepository.save(url);
 
         var first = new UrlCheck();

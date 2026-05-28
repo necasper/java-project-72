@@ -4,15 +4,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Optional;
 
 public final class UrlNormalizer {
 
     private UrlNormalizer() {
     }
 
-    public static String normalize(String raw) {
+    public static Optional<String> normalize(String raw) {
         if (raw == null || raw.isBlank()) {
-            return null;
+            return Optional.empty();
         }
         try {
             URI uri = new URI(raw.trim());
@@ -20,15 +21,15 @@ public final class UrlNormalizer {
             String protocol = url.getProtocol();
             String host = url.getHost();
             if (protocol == null || protocol.isBlank() || host == null || host.isBlank()) {
-                return null;
+                return Optional.empty();
             }
             int port = url.getPort();
             if (port == -1) {
-                return protocol + "://" + host;
+                return Optional.of(protocol + "://" + host);
             }
-            return protocol + "://" + host + ":" + port;
+            return Optional.of(protocol + "://" + host + ":" + port);
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
-            return null;
+            return Optional.empty();
         }
     }
 }

@@ -18,13 +18,12 @@ class UrlTest {
     }
 
     @Test
-    void allArgsConstructorSetsFields() {
-        var createdAt = LocalDateTime.of(2024, 5, 1, 12, 0);
-        var url = new Url(1L, "https://example.com", createdAt);
+    void nameConstructorSetsName() {
+        var url = new Url("https://example.com");
 
-        assertEquals(1L, url.getId());
         assertEquals("https://example.com", url.getName());
-        assertEquals(createdAt, url.getCreatedAt());
+        assertNull(url.getId());
+        assertNull(url.getCreatedAt());
     }
 
     @Test

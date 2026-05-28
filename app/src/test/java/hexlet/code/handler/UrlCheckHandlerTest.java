@@ -115,7 +115,11 @@ class UrlCheckHandlerTest {
 
         assertEquals(1, urlCheckRepository.countByUrlId(urlId));
         var checks = urlCheckRepository.findByUrlId(urlId);
-        assertEquals(200, checks.get(0).getStatusCode());
+        var check = checks.get(0);
+        assertEquals(200, check.getStatusCode());
+        assertEquals("Awesome page", check.getTitle());
+        assertEquals("Do not expect a miracle, miracles yourself!", check.getH1());
+        assertEquals("Statements of great people", check.getDescription());
     }
 
     @Test
@@ -183,8 +187,7 @@ class UrlCheckHandlerTest {
     }
 
     private long createUrl(String address) throws Exception {
-        var url = new Url();
-        url.setName(address);
+        var url = new Url(address);
         urlRepository.save(url);
         return url.getId();
     }

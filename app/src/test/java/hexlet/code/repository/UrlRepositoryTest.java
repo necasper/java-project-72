@@ -8,7 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,7 +23,7 @@ class UrlRepositoryTest {
     @BeforeEach
     void setUp() throws Exception {
         var config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:mem:urlRepositoryTest;DB_CLOSE_DELAY=-1");
+        config.setJdbcUrl("jdbc:h2:mem:urlRepositoryTest_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
         config.setMaximumPoolSize(1);
         dataSource = new HikariDataSource(config);
         SchemaInitializer.apply(dataSource);
@@ -38,9 +38,8 @@ class UrlRepositoryTest {
     }
 
     @Test
-    void saveWithoutCreatedAtAssignsIdAndTimestamp() throws Exception {
-        var url = new Url();
-        url.setName("https://example.com");
+    void saveAssignsIdAndTimestamp() throws Exception {
+        var url = new Url("https://example.com");
 
         var saved = repository.save(url);
 
@@ -50,23 +49,8 @@ class UrlRepositoryTest {
     }
 
     @Test
-    void saveWithCreatedAtPersistsProvidedTimestamp() throws Exception {
-        var createdAt = LocalDateTime.of(2023, 1, 15, 10, 20, 30);
-        var url = new Url();
-        url.setName("https://hexlet.io");
-        url.setCreatedAt(createdAt);
-
-        var saved = repository.save(url);
-
-        assertNotNull(saved.getId());
-        assertEquals("https://hexlet.io", saved.getName());
-        assertEquals(createdAt, saved.getCreatedAt());
-    }
-
-    @Test
     void findByNameReturnsSavedUrl() throws Exception {
-        var url = new Url();
-        url.setName("https://example.org");
+        var url = new Url("https://example.org");
         repository.save(url);
 
         var found = repository.findByName("https://example.org");
@@ -77,19 +61,12 @@ class UrlRepositoryTest {
 
     @Test
     void findAllReturnsUrlsOrderedByCreatedAtDesc() throws Exception {
-        var older = new Url();
-        older.setName("https://older.com");
-        older.setCreatedAt(LocalDateTime.of(2020, 1, 1, 0, 0));
-        repository.save(older);
-
-        var newer = new Url();
-        newer.setName("https://newer.com");
-        newer.setCreatedAt(LocalDateTime.of(2024, 1, 1, 0, 0));
-        repository.save(newer);
+        repository.save(new Url("https://older.com"));
+        Thread.sleep(5);
+        var newer = repository.save(new Url("https://newer.com"));
 
         var urls = repository.findAll();
-        var ids = urls.stream().map(Url::getId).toList();
 
-        assertTrue(ids.indexOf(newer.getId()) < ids.indexOf(older.getId()));
+        assertEquals(newer.getId(), urls.get(0).getId());
     }
 }
